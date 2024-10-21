@@ -5,9 +5,9 @@ const jwt = require('jsonwebtoken');
 const userCtrl = {
     register: async (req, res) => {
         try {
-            const { email, password} = req.body;
+            const { email, password } = req.body;
 
-            const user = await Users.findOne({ email:email });
+            const user = await Users.findOne({ email: email });
             if (user) return res.status(400).json({ mes: "this email already exists" });
 
             if (password.length < 6) return res.status(400).json({ mes: "Password should be at least 6 characters long" });
@@ -23,24 +23,40 @@ const userCtrl = {
                 path: '/user/refresh_token',
             });
 
-            await newUser.save();
-            return res.json({accesstoken});
+            return res.json({ accesstoken });
         } catch (error) {
             return res.status(500).json({ mes: error.message });
         }
     },
 
-    login: async(req,res )=>{
+    login: async (req, res) => {
         try {
-            const {email,password}= req.body;
+            const { email, password } = req.body;
             const user = await Users.findOne({ email })
 
-            if(!user) return res.status(400).json({mes:'user does not exist'})
-            
-            const isMatch = await bcrypt.compare(password,user.password)
-            if(!isMatch) return res.status(400).json({mes:'Incorrect Password'})
-            
-                return res.json({mes:'Login Success!'})
+            if (!user) return res.status(400).json({ mes: 'user does not exist' })
+
+            const isMatch = await bcrypt.compare(password, user.password)
+            if (!isMatch) return res.status(400).json({ mes: 'Incorrect Password' })
+
+            const accesstoken = createAccessToken({ id: user._id });
+            const refreshtoken = createRefreshToken({ id: user._id });
+            res.cookie("refreshtoken", refreshtoken, {
+                httpOnly: true,
+                path: '/user/refresh_token',
+            });
+
+            return res.json({ accesstoken });
+        } catch (error) {
+            return res.status(500).json({ mes: error.message });
+        }
+    },
+
+    logout: async (req, res) => {
+        try {
+            res.clearCokkie('refresh',{path:'/user/refresh_token'})
+            return res.json({ mes: "Logged Out" });
+
         } catch (error) {
             return res.status(500).json({ mes: error.message });
         }
@@ -54,9 +70,9 @@ const userCtrl = {
             jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
                 if (err) return res.status(400).json({ mes: "Login or Register Now" });
                 const accesstoken = createAccessToken({ id: user.id });
-                return res.json({accesstoken});
+                return res.json({ accesstoken });
             });
-            
+
         } catch (error) {
             return res.status(500).json({ mes: error.message });
         }
