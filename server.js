@@ -15,13 +15,14 @@ app.use(fileUpload({
 }))
 
 app.use('/user', require('./routers/userRouter.js'))
+app.use('/api', require('./routers/categoryRouter.js'))
 
 //connect MongoDB
-const URI = process.env.MONGODB_URL;
+const URL = process.env.MONGODB_URL;
 
 const connectToDB = async () => {
     try {
-        await mongoose.connect(URI);
+        await mongoose.connect(URL);
         console.log('Connected to DB');
     } catch (err) {
         console.error('Database connection error:', err);
@@ -37,7 +38,7 @@ app.get('/',(req,res)=>{
 })
 
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 8000
 
 app.listen(PORT,()=>{
     console.log('server is up and running',PORT);

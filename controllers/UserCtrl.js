@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const userCtrl = {
     register: async (req, res) => {
         try {
-            const { email, password } = req.body;
+            const { name, email, password } = req.body;
 
             const user = await Users.findOne({ email: email });
             if (user) return res.status(400).json({ mes: "this email already exists" });
@@ -46,7 +46,7 @@ const userCtrl = {
                 path: '/user/refresh_token',
             });
 
-            return res.json({ accesstoken });
+            return res.json({mes:"Login Success!", accesstoken });
         } catch (error) {
             return res.status(500).json({ mes: error.message });
         }
@@ -54,7 +54,7 @@ const userCtrl = {
 
     logout: async (req, res) => {
         try {
-            res.clearCokkie('refresh',{path:'/user/refresh_token'})
+            res.clearCookie('refresh',{path:'/user/refresh_token'})
             return res.json({ mes: "Logged Out" });
 
         } catch (error) {
@@ -73,6 +73,16 @@ const userCtrl = {
                 return res.json({ accesstoken });
             });
 
+        } catch (error) {
+            return res.status(500).json({ mes: error.message });
+        }
+    },
+    getUser: async (req,res)=>{
+        try {
+            const user = await User.findById0(req.user.id)
+            if(!user) return res.status(400).json({mes:"user does not exit"})
+            
+            return res.json(user)
         } catch (error) {
             return res.status(500).json({ mes: error.message });
         }
