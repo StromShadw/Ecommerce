@@ -55,7 +55,7 @@ const userCtrl = {
 
     logout: async (req, res) => {
         try {
-            res.clearCookie('refresh',{path:'/user/refresh_token'})
+            res.clearCookie('refresh', { path:'/user/refresh_token' } )
             return res.json({ mes: "Logged Out" });
 
         } catch (error) {
@@ -80,7 +80,7 @@ const userCtrl = {
     },
     getUser: async (req,res)=>{
         try {
-            const user = await User.findById0(req.user.id)
+            const user = await Users.findById(req.user.id).select('-password')
             if(!user) return res.status(400).json({mes:"user does not exit"})
             
             return res.json(user)
