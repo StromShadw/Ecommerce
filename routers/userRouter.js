@@ -4,8 +4,8 @@ const auth = require('../middleware/auth')
 
 router.post('/register',userCtrl.register)
 router.post('/login',userCtrl.login)
-router.post('/logout',userCtrl.logout)
-router.post('/refresh_token',userCtrl.refreshToken)
-router.post('/infor',auth,userCtrl.getUser)
+router.get('/logout',userCtrl.logout)
+router.get('/refresh_token',userCtrl.refreshToken)
+router.get('/infor',auth,userCtrl.getUser)
 
 module.exports = router

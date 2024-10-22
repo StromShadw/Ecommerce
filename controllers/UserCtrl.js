@@ -22,7 +22,8 @@ const userCtrl = {
                 httpOnly: true,
                 path: '/user/refresh_token',
             });
-
+            
+            await newUser.save()
             return res.json({ accesstoken });
         } catch (error) {
             return res.status(500).json({ mes: error.message });
