@@ -23,6 +23,7 @@ const userCtrl = {
                 path: '/user/refresh_token',
             });
 
+            await newUser.save()
             return res.json({ accesstoken });
         } catch (error) {
             return res.status(500).json({ mes: error.message });
@@ -54,7 +55,7 @@ const userCtrl = {
 
     logout: async (req, res) => {
         try {
-            res.clearCookie('refresh',{path:'/user/refresh_token'})
+            res.clearCookie('refreshtoken',{path:'/user/refresh_token'})
             return res.json({ mes: "Logged Out" });
 
         } catch (error) {
