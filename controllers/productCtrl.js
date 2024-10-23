@@ -18,17 +18,36 @@ class APIfeatures {
         console.log(queryStr)
         return this;
     }
-    sorting() { }
-    paginating() { }
+    sorting() {
+        if(this.queryString.sort){
+            const sortBy = this.queryString.sort.split(',').join(' ')
+            console.log(sortBy)
+            this.query = this.query.sort(sortBy)
+        }else{
+            this.query= this.query.sort('createAt')
+        }
+        return this;
+    }
+    paginating() {
+        const page = this.queryString.page * 1 || 1
+        const limit = this.queryString.limit * 1 || 3
+        const skip = (page - 1)* limit
+        this.query= this.query.skip(skip).limit(limit)
+        return this
+     }
 }
 
 
 const productCtrl = {
     getProducts: async (req, res) => {
         try {
-            const features = new APIfeatures(Products.find(), req.query).filtering()
+            const features = new APIfeatures(Products.find(), req.query).filtering().sorting().paginating()
             const products = await features.query
-            return res.json(products)
+            return res.json({
+                status:"success",
+                result: products.length,
+                products
+            })
         } catch (err) {
             return res.status(500).json({ mes: err.message })
         }
