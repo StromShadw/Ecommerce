@@ -10,12 +10,18 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors())
+
+
 app.use(fileUpload({
-    useTempFiles:true
+    useTempFiles:true,
 }))
+
 
 app.use('/user', require('./routers/userRouter.js'))
 app.use('/api', require('./routers/categoryRouter.js'))
+app.use('/api', require('./routers/productRouter.js'))
+app.use('/api', require('./routers/upload.js'))
+
 
 //connect MongoDB
 const URL = process.env.MONGODB_URL;
